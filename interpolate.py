@@ -25,18 +25,29 @@ with open( "./events.json", "r" ) as jsonfile:
 comprehend_client = boto3.client("comprehend")
 
 keywords_groups = [
-    [ "USA", "American", "U.S.", "US", "United States", "America", "Washington", "D.C.", "NSA", "FBI", "CIA", "NASA" ],
+    [ "USA", "American", "U.S.", "US", "U.S", "United States", "America", "Washington", "D.C.", "Department of Defense", "DOD", "FAA", "NSA", "FBI", "CIA", "NASA", "Air Force", "Pentagon", "Medicare", "Medicaid", "Senate", "Department of State", "DHS" ],
+    [ "USA", "Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","District of Columbia","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"],
     [ "Canada", "Canadian", "Toronto", "Quebec", "Montreal" ],
     [ "Italy", "Italian" ],
     [ "United Nations", "UN", "U.N" ],
     [ "Facebook", "facebook" ],
     [ "Twitter", "twitter" ],
+    [ "Uber" ],
+    [ "Lyft" ],
+    [ "Yahoo" ],
+    [ "Dairy Queen"],
+    [ "Equifax" ],
+    [ "RSA" ],
+    [ "Lockheed Martin" ],
+    [ "Boeing" ],
+    [ "NASDAQ"],
+    [ "NYSE" ],
     [ "Google", "google" ],
     [ "Microsoft", "microsoft" ],
     [ "Apple" ],
     [ "Amazon", "AWS" ],
     [ "Russia", "Russian", "Moscow", "Kremlin" ],
-    [ "China", "Chinese", "People's Liberation Army", "PLA" ],
+    [ "China", "Chinese", "People's Liberation Army", "PLA", "Hong Kong", "Beijing" ],
     [ "Yemen" ],
     [ "India", "Indian"],
     [ "Norway", "Norwegian" ],
@@ -44,7 +55,7 @@ keywords_groups = [
     [ "North Korea", "North Korean", "N. Korea", "Pyongyang"],
     [ "South Korea", "South Korean", "S. Korea", "Seol"],
     [ "UK", "U.K.", "United Kingdom", "England", "English", "Britain", "British", "London", "BBC" ],
-    [ "Lebanon"],
+    [ "Lebanon", "Lebanese" ],
     [ "Finland", "Finnish"],
     [ "Iran", "Iranian" ],
     [ "Poland", "Polish" ],
@@ -63,6 +74,7 @@ keywords_groups = [
     [ "Azerbaijan", "Azerbaijani" ],
     [ "Israel", "Israeli" ],
     [ "Tibet", "Tibetan" ],
+    [ "Philipines", "Philippine" ],
     [ "Uyghur"],
     [ "Kurdistan", "Kurds", "Kurdish" ],
     [ "Turkey" ],
@@ -74,7 +86,7 @@ keywords_groups = [
     [ "COVID-19"],
     [ "Ukraine", "Ukrainian"],
     [ "Oil", "oil", "Petroleum", "gas" ],
-    [ "Crypto", "Bitcoin" ],
+    [ "Crypto", "Bitcoin", "cryptocurrency", "crypto", "Etherium" ],
     [ "Bahrain", "Bahraini" ],
     [ "Africa", "African" ],
     [ "Mexico", "Mexican" ],
@@ -82,6 +94,22 @@ keywords_groups = [
     [ "ISIS" ],
     [ "Al-Qaida" ],
     [ "Hamas" ],
+    [ "Unknown", "Unidentified", "underground" ],
+    [ "Austria", "Austrian" ],
+    [ "Sri Lanka" ],
+    [ "Bangledesh" ],
+    [ "Lithuania" ],
+    [ "Croatia" ],
+    [ "Singapore" ],
+    [ "Caribbean" ],
+    [ "Netherlands" ],
+    [ "Cambodia" ], 
+    [ "Estonia" ],
+    [ "Sweden", "Swedish" ],
+    [ "Ireland", "Irish" ],
+    [ "Liberia" ],
+    [ "Brazil" ],
+    []
 
 ]
 
@@ -125,6 +153,8 @@ for record in reversed( records ):
     #bins.append( item )
     #bins
     hits = contains_keyword( record['description'], keywords_groups )
+    if len( hits ) == 1 and "Unknown" not in hits:
+        hits.append( "Unknown" )
     if len(hits) > 1:
         record_count += 1
         for hit in hits:
@@ -155,7 +185,7 @@ print( f"records w/ 1 or fewer entities: {missed_count}" )
 for entity, targets in edge_dict.items():
     for target, weight in targets.items():
         #if entity in FILTER or target in FILTER:
-        edge_dict[ target ].pop( entity )
+        edge_dict[ target ].pop( entity ) # remove the target from the edge dictionary to prevent duplicates
         dot.edge( entity, target, label=f"{entity}<->{target}: {weight}", penwidth=f"{math.log(weight*5)}" )
 
 dot = dot.unflatten(stagger=20)
