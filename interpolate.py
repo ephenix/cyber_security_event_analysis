@@ -40,6 +40,7 @@ keywords_groups = [
     [ "RSA" ],
     [ "Lockheed Martin" ],
     [ "Boeing" ],
+    [ "Airbus" ],
     [ "NASDAQ"],
     [ "NYSE" ],
     [ "Google", "google" ],
@@ -109,7 +110,7 @@ keywords_groups = [
     [ "Ireland", "Irish" ],
     [ "Liberia" ],
     [ "Brazil" ],
-    []
+    [ "Egypt" ]
 
 ]
 
